@@ -9,7 +9,7 @@ I used the .csv file provided by the American Civil Liberties Union (ACLU) which
 
 ACLU has noted concerns about the comprehensiveness and accuracy of the government's data. Despite this, working with the data available can still yield valuable insights. 
 
-### Results
+### Results:
 
 **Original Data**
 
