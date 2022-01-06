@@ -17,11 +17,20 @@ ACLU has noted concerns about the comprehensiveness and accuracy of the governme
 
 First, I cleand up the data. The data had repeating information. In order to make things easier to analyze, I took out *addr* column from the data.
  
- <img width="141" alt="Screen Shot 2021-09-23 at 4 45 19 PM" src="https://user-images.githubusercontent.com/89553126/134590657-29e2d516-4855-4c7f-b7cb-3826e3404f91.png">
+```R
+# select columns
+aclu <- aclu %>%
+select(-addr)
+```
  
 Afterwards, I renamed the columns to make them easier to understand.
 
-<img width="635" alt="Screen Shot 2021-09-23 at 4 46 35 PM" src="https://user-images.githubusercontent.com/89553126/134590680-7d744b59-d92b-4ede-92f8-ec534740c3dd.png">
+```R
+# rename columns
+aclu <- aclu %>%
+rename(city = program_city, state = program_state, number_children = n, longitude = lon, latitude = lat)
+names(aclu)
+```
 
 <img width="635" alt="Screen Shot 2021-09-23 at 4 46 49 PM" src="https://user-images.githubusercontent.com/89553126/134590721-9b787377-98be-427a-bea7-115fc54b402f.png">
  
@@ -29,26 +38,46 @@ Now I am interesed in getting an understanding of how far some of the children h
 
 I know that the southernmost point of the border lies at a latitude of **25.83**. Therefore, I created a variable called *border_latitude* with the value **25.83** that I will use to find the *lat_change_border* which I will add to our existing data.
 
-<img width="427" alt="Screen Shot 2021-09-23 at 4 51 20 PM" src="https://user-images.githubusercontent.com/89553126/134590751-51770248-598d-4f71-bb1a-7f5355c8e697.png">
+```R
+# add column
+border_latitude <- 25.83
+aclu <- aclu %>%
+mutate(lat_change_border = latitude - border_latitude)
+head(aclu)
+```
  
 <img width="813" alt="Screen Shot 2021-09-23 at 4 51 33 PM" src="https://user-images.githubusercontent.com/89553126/134590768-0d1f097e-1d6b-4bcd-81bd-41b21e36f433.png">
 
-
 Now I can arrange the borders from furthest to closest so in this case, greater than 15° latitude change from the border.
 
-<img width="250" alt="Screen Shot 2021-09-23 at 4 52 48 PM" src="https://user-images.githubusercontent.com/89553126/134590802-c82cf7e5-3ed8-4395-911f-09e4d1b47ff5.png">
+```R
+# latitude change
+ further_away <- aclu %>%
+ filter(lat_change_border > 15)
+head(further_away)
+```
 
 <img width="813" alt="Screen Shot 2021-09-23 at 4 53 06 PM" src="https://user-images.githubusercontent.com/89553126/134590826-b9c3c8c5-2a93-4efb-b371-5bd889a5ceda.png">
 
 As well as place the latitude change in descending order.
 
-<img width="268" alt="Screen Shot 2021-09-23 at 4 54 23 PM" src="https://user-images.githubusercontent.com/89553126/134590868-d17d9667-77ed-4674-9477-253a3bb7cfcb.png">
+```R
+# number of children
+further_away <- further_away %>%
+arrange(desc(lat_change_border))
+head(further_away)
+```
 
 <img width="824" alt="Screen Shot 2021-09-23 at 4 54 36 PM" src="https://user-images.githubusercontent.com/89553126/134590886-3dcd40ba-fe52-463d-9142-dce023303c57.png">
  
 As someone who wants to stay informed, I want to also identify the detention centers that hold the largest number of children.
 
-<img width="254" alt="Screen Shot 2021-09-23 at 5 01 02 PM" src="https://user-images.githubusercontent.com/89553126/134590908-16456ac8-7d62-4378-901f-c2d017ce4aa5.png">
+```R
+# state analysis
+ordered_by_children <- aclu %>%
+arrange(desc(number_children))
+head(ordered_by_children)
+```
 
 <img width="816" alt="Screen Shot 2021-09-23 at 5 01 11 PM" src="https://user-images.githubusercontent.com/89553126/134590941-9184078f-40ab-4d10-8397-87ad4abcea3d.png">
  
@@ -56,7 +85,15 @@ According to the data, children have been separated from their parents to detent
 
 After this I will order the rows of *chosen_state_separations* by *number_children* in descending order.
 
-<img width="289" alt="Screen Shot 2021-09-23 at 5 06 51 PM" src="https://user-images.githubusercontent.com/89553126/134591026-fe208164-0f33-488a-abc8-e1f113aa1e43.png">
+```R
+# specific state
+chosen_state <- 'TX'
+chosen_state_separations <- aclu %>%
+filter(state == chosen_state) %>%
+arrange(desc(number_children))
+ 
+head(chosen_state_separations)
+```
 
 <img width="814" alt="Screen Shot 2021-09-23 at 5 06 58 PM" src="https://user-images.githubusercontent.com/89553126/134591039-9974f3c6-4789-4f02-b2eb-cae37f0cdb09.png">
  
